@@ -1,0 +1,52 @@
+[build-system]
+build-backend = "setuptools.build_meta"
+requires = [ "setuptools>=77", "wheel" ]
+
+[project]
+name = "wagtail-review"
+version = "0.5"
+description = "Review workflow for Wagtail"
+readme = "README.md"
+license = "BSD-3-Clause"
+authors = [
+  { name = "Matthew Westcott", email = "matthew.westcott@torchbox.com" },
+]
+requires-python = ">=3.10"
+classifiers = [
+  "Development Status :: 3 - Alpha",
+  "Environment :: Web Environment",
+  "Framework :: Django",
+  "Framework :: Django :: 5.2",
+  "Framework :: Django :: 6.0",
+  "Framework :: Wagtail",
+  "Framework :: Wagtail :: 7",
+  "Intended Audience :: Developers",
+  "Operating System :: OS Independent",
+  "Programming Language :: Python",
+  "Programming Language :: Python :: 3 :: Only",
+  "Programming Language :: Python :: 3.10",
+  "Programming Language :: Python :: 3.11",
+  "Programming Language :: Python :: 3.12",
+  "Programming Language :: Python :: 3.13",
+  "Programming Language :: Python :: 3.14",
+]
+dependencies = [
+  "swapper>=1.4",
+  "wagtail>=7",
+]
+optional-dependencies.testing = [
+  "coverage>=6.5",
+  "pre-commit>=4",
+  "tox>=4.18.1",
+]
+urls.Changelog = "https://github.com/wagtail-nest/wagtail-review/blob/main/CHANGELOG.txt"
+urls.Source = "https://github.com/wagtail-nest/wagtail-review"
+
+[tool.setuptools.packages.find]
+include = [ "wagtail_review*" ]
+
+[tool.setuptools.package-data]
+wagtail_review = [
+  "static/**/*",
+  "templates/**/*",
+]
