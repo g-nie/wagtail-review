@@ -10,16 +10,18 @@ from wagtail_review.models import Annotation, Reviewer
 
 def _check_reviewer_credentials(request):
     try:
-        mode = request.headers.get('x-wagtailreview-mode') or request.GET['mode']
-        reviewer_id = request.headers.get('x-wagtailreview-reviewer') or request.GET['reviewer']
-        token = request.headers.get('x-wagtailreview-token') or request.GET['token']
+        mode = request.headers.get("x-wagtailreview-mode") or request.GET["mode"]
+        reviewer_id = (
+            request.headers.get("x-wagtailreview-reviewer") or request.GET["reviewer"]
+        )
+        token = request.headers.get("x-wagtailreview-token") or request.GET["token"]
         reviewer = Reviewer.objects.get(id=reviewer_id)
     except (KeyError, Reviewer.DoesNotExist):
-        raise PermissionDenied
+        raise PermissionDenied  # noqa: B904
 
-    if (mode == 'respond' or mode == 'comment') and token == reviewer.response_token:
+    if (mode == "respond" or mode == "comment") and token == reviewer.response_token:  # noqa: SIM114
         pass
-    elif mode == 'view' and token == reviewer.view_token:
+    elif mode == "view" and token == reviewer.view_token:
         pass
     else:
         raise PermissionDenied
@@ -28,48 +30,48 @@ def _check_reviewer_credentials(request):
 
 
 def root(request):
-    return JsonResponse({
-        "name": "Annotator Store API",
-        "version": "2.0.0"
-    })
+    return JsonResponse({"name": "Annotator Store API", "version": "2.0.0"})
 
 
 @never_cache
 def index(request):
     reviewer, mode = _check_reviewer_credentials(request)
 
-    if request.method == 'GET':
+    if request.method == "GET":
         results = [
             annotation.as_json_data()
             for annotation in reviewer.review.get_annotations()
         ]
         return JsonResponse(results, safe=False)
 
-    elif request.method == 'POST':
-        if mode not in ('respond', 'comment'):
+    elif request.method == "POST":
+        if mode not in ("respond", "comment"):
             raise PermissionDenied
 
-        if reviewer.review.status == 'closed':
+        if reviewer.review.status == "closed":
             raise PermissionDenied
 
         data = json.loads(request.body)
 
-        annotation = reviewer.annotations.create(quote=data['quote'], text=data['text'])
-        for r in data['ranges']:
+        annotation = reviewer.annotations.create(quote=data["quote"], text=data["text"])
+        for r in data["ranges"]:
             annotation.ranges.create(
-                start=r['start'], start_offset=r['startOffset'], end=r['end'], end_offset=r['endOffset']
+                start=r["start"],
+                start_offset=r["startOffset"],
+                end=r["end"],
+                end_offset=r["endOffset"],
             )
 
-        return redirect('wagtail_review:annotations_api_item', annotation.id)
+        return redirect("wagtail_review:annotations_api_item", annotation.id)
     else:
-        return HttpResponseNotAllowed(['GET', 'POST'], "Method not allowed")
+        return HttpResponseNotAllowed(["GET", "POST"], "Method not allowed")
 
 
 @never_cache
 def item(request, id):
     reviewer, mode = _check_reviewer_credentials(request)
 
-    if request.method == 'GET':
+    if request.method == "GET":
         annotation = get_object_or_404(Annotation, id=id)
 
         # only allow retrieving annotations within the same review as the current user's credentials
@@ -79,7 +81,7 @@ def item(request, id):
         return JsonResponse(annotation.as_json_data())
 
     else:
-        return HttpResponseNotAllowed(['GET'], "Method not allowed")
+        return HttpResponseNotAllowed(["GET"], "Method not allowed")
 
 
 @never_cache
@@ -87,10 +89,6 @@ def search(request):
     reviewer, mode = _check_reviewer_credentials(request)
 
     results = [
-        annotation.as_json_data()
-        for annotation in reviewer.review.get_annotations()
+        annotation.as_json_data() for annotation in reviewer.review.get_annotations()
     ]
-    return JsonResponse({
-        'total': len(results),
-        'rows': results
-    })
+    return JsonResponse({"total": len(results), "rows": results})

@@ -20,9 +20,9 @@ def view(request, reviewer_id, token):
     return page.make_preview_request(
         original_request=request,
         extra_request_attrs={
-            'wagtailreview_mode': 'view',
-            'wagtailreview_reviewer': reviewer,
-        }
+            "wagtailreview_mode": "view",
+            "wagtailreview_reviewer": reviewer,
+        },
     )
 
 
@@ -31,15 +31,15 @@ def respond(request, reviewer_id, token):
     if token != reviewer.response_token:
         raise PermissionDenied
 
-    if request.method == 'POST':
+    if request.method == "POST":
         response = Response(reviewer=reviewer)
         form = ResponseForm(request.POST, instance=response)
-        if form.is_valid() and reviewer.review.status != 'closed':
+        if form.is_valid() and reviewer.review.status != "closed":
             form.save()
             response.send_notification_to_submitter()
-            if request.user.has_perm('wagtailadmin.access_admin'):
+            if request.user.has_perm("wagtailadmin.access_admin"):
                 messages.success(request, SUCCESS_RESPONSE_MESSAGE)
-                return redirect(reverse('wagtail_review_admin:dashboard'))
+                return redirect(reverse("wagtail_review_admin:dashboard"))
             return HttpResponse(SUCCESS_RESPONSE_MESSAGE)
 
     else:
@@ -52,7 +52,7 @@ def respond(request, reviewer_id, token):
         return page.make_preview_request(
             original_request=request,
             extra_request_attrs={
-                'wagtailreview_mode': 'respond',
-                'wagtailreview_reviewer': reviewer,
-            }
+                "wagtailreview_mode": "respond",
+                "wagtailreview_reviewer": reviewer,
+            },
         )

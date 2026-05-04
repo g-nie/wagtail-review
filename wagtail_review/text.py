@@ -15,4 +15,4 @@ def user_display_name(user):
     except AttributeError:
         # we were passed None or something else that isn't a valid user object; return
         # empty string to replicate the behaviour of {{ user.get_full_name|default:user.get_username }}
-        return ''
+        return ""
