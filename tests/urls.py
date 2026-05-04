@@ -1,6 +1,6 @@
 from __future__ import absolute_import, unicode_literals
 
-from django.conf.urls import include
+from django.urls import include
 from django.urls import path
 
 from wagtail.admin import urls as wagtailadmin_urls

@@ -10,9 +10,9 @@ from wagtail_review.models import Annotation, Reviewer
 
 def _check_reviewer_credentials(request):
     try:
-        mode = request.META.get('HTTP_X_WAGTAILREVIEW_MODE') or request.GET['mode']
-        reviewer_id = request.META.get('HTTP_X_WAGTAILREVIEW_REVIEWER') or request.GET['reviewer']
-        token = request.META.get('HTTP_X_WAGTAILREVIEW_TOKEN') or request.GET['token']
+        mode = request.headers.get('x-wagtailreview-mode') or request.GET['mode']
+        reviewer_id = request.headers.get('x-wagtailreview-reviewer') or request.GET['reviewer']
+        token = request.headers.get('x-wagtailreview-token') or request.GET['token']
         reviewer = Reviewer.objects.get(id=reviewer_id)
     except (KeyError, Reviewer.DoesNotExist):
         raise PermissionDenied
